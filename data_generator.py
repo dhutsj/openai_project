@@ -3,7 +3,7 @@ import xmltodict
 import os
 
 # assign directory
-directory = '$PATH'
+directory = '/Users/shangc/Downloads/hackathon/2352-152X'
 i = 0
 # iterate over xml files in
 # that directory and transfer into json files
