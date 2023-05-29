@@ -21,7 +21,7 @@ function App() {
       const prompt = `Please generate a bullet list of highlights using Title and Abstract. Title=${title}\nAbstract=${abstract}->`;
       const requestOptions = {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'api-key': '25771e964df2428aa7fbbd7c7734fec7' },
+          headers: { 'Content-Type': 'application/json', 'api-key': 'api-key' },
           body: JSON.stringify({ prompt: prompt, "max_tokens": 512, "top_p": 0.1, "n": 2 })
       };
 
