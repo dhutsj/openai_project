@@ -2,7 +2,7 @@ import json
 import os
 
 # assign directory
-directory = './'
+directory = '$PATH'
 i = 0
 # iterate over files in
 # that directory
@@ -14,50 +14,55 @@ for filename in os.listdir(directory):
         mf = open(f)
         data = json.load(mf)
 
+        title = ""
+        try:
+            title = data['doc:document']['ja:article']['ja:head']['ce:title']['#text']
+        except:
+            continue
+
         abstract = ""
         try:
             if type(data['doc:document']['ja:article']['ja:head']['ce:abstract']) == list:
-                abstract = data['doc:document']['ja:article']['ja:head']['ce:abstract'][0]['ce:abstract-sec']['ce:simple-para']['#text']
-                print(f"abstract: {abstract}")
+                for i in data['doc:document']['ja:article']['ja:head']['ce:abstract']:
+                    if i['@class'] == 'author' or i['@class'] == 'editor':
+                        abstract = i['ce:abstract-sec']['ce:simple-para']['#text']
+                        break
             elif type(data['doc:document']['ja:article']['ja:head']['ce:abstract']) == dict:
-                abstract = data['doc:document']['ja:article']['ja:head']['ce:abstract']['ce:abstract-sec']['ce:simple-para']['#text']
-                print(f"abstract: {abstract}")
+                if data['doc:document']['ja:article']['ja:head']['ce:abstract']['@class'] == 'author' or data['doc:document']['ja:article']['ja:head']['ce:abstract']['@class'] == 'editor':
+                    abstract = data['doc:document']['ja:article']['ja:head']['ce:abstract']['ce:abstract-sec']['ce:simple-para']['#text']
         except:
             continue
+
         introduction = ""
         try:
             for i in data['doc:document']['ja:article']['ja:body']['ce:sections']['ce:section'][0]['ce:para']:
                 introduction = introduction + i.get('#text', '')
-            print(f"introduction: {introduction}")
         except:
             continue
+
         highlights = ""
         try:
-            for i in data['doc:document']['ja:article']['ja:head']['ce:abstract'][2]['ce:abstract-sec']['ce:simple-para']['ce:list']['ce:list-item']:
-                if type(i['ce:para']) == dict:
-                    highlights = highlights + i['ce:para']['#text']
-                if type(i['ce:para']) == list:
-                    for j in i['ce:para']:
-                        highlights = highlights + j['#text']
-            print(f"highlights: {highlights}")
-        except IndexError:
-            for i in data['doc:document']['ja:article']['ja:head']['ce:abstract'][1]['ce:abstract-sec']['ce:simple-para']['ce:list']['ce:list-item']:
-                if type(i['ce:para']) == dict:
-                    highlights = highlights + i['ce:para']['#text']
-                if type(i['ce:para']) == list:
-                    for j in i['ce:para']:
-                        highlights = highlights + j['#text']
-            print(f"highlights: {highlights}")
+            for i in data['doc:document']['ja:article']['ja:head']['ce:abstract']:
+                if i['@class'] == 'author-highlights':
+                    for highlightsElem in i['ce:abstract-sec']['ce:simple-para']['ce:list']['ce:list-item']:
+                        if type(highlightsElem['ce:para']) == dict:
+                            highlights = highlights + '- ' + highlightsElem['ce:para']['#text'] + '\n'
+                        if type(highlightsElem['ce:para']) == list:
+                            for j in highlightsElem['ce:para']:
+                                highlights = highlights + '- ' + j['#text'] + '\n'
+        except:
+            continue
 
-        dictionary = {
-            "prompt": "Here is our introduction: {introduction}\n\n###\n\n".format(introduction=introduction),
-            "completion": "Here is our highlights: {highlights} END".format(highlights=highlights)
-        }
-        with open("sample.json", "a") as outfile:
-            try:
-                json.dump(dictionary, outfile)
-                outfile.write("\n")
-            except:
-                continue
+        if title and abstract and highlights and introduction:
+            dictionary = {
+                "prompt": "Please generate a bullet list of highlights using Title and Abstract. Title={title}\nAbstract={abstract}->".format(title=title,abstract=abstract),
+                "completion": " {highlights} ".format(highlights=highlights)
+            }
+            with open("validation.json", "a") as outfile:
+                try:
+                    json.dump(dictionary, outfile)
+                    outfile.write("\n")
+                except:
+                    continue
 
         mf.close()
