@@ -1,8 +1,40 @@
-# openai_project
+# oepnai_project
 
-1. Prepare JSONL training data.
-   - run `data_generator.py` to transfer xml to json files
-   - run `myjsontransfer.py` to combine all the json file into a single one, `sample.json` will be created 
-   - run command `openai tools fine_tunes.prepare_data -f ./sample.json` to generate the JSONL file
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.\
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
+
+### `npm test`
+
+Launches the test runner in the interactive watch mode.\
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.\
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.\
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+## Data Generator
+0. Change the path in the `python` file to your data input/out path. [Maybe improve later]
+
+1. Prepare JSONL training data. `cd src/scripts` and run the following command
+    - run `python3 data_generator.py` to transfer xml to json files
+    - run `python3 myjsontransfer.py` to combine all the json file into a single one, `sample.json` will be created
+    - run command `openai tools fine_tunes.prepare_data -f ./sample.json` to generate the JSONL file
 
 2. Train a costomzied modle based on the above geretared JSONL file.
