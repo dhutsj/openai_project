@@ -81,6 +81,8 @@ target/
 # intellij
 .idea
 
+node_modules/
+
 # IPython
 profile_default/
 ipython_config.py
