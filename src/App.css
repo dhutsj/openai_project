@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+}
+
+.button-container {
+  margin: 30px 0;
+  text-align: center;
+}
+
+.button-container button {
+  display: revert;
+}
+
